@@ -12,7 +12,7 @@ jobs:
       - name: build docker image
         run: docker build -t romanhudyma/idp-deploy-next .
       - name: sign in to docker hub
-        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p '${{ secrets.DOCKER_PASS }}'
       - name: push to docker hub
         run: docker push romanhudyma/idp-deploy-next:latest
   deploy:
