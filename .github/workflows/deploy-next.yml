@@ -25,7 +25,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
       - name: deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST_NEXT }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST_NEXT }} << 'EOF'
             docker pull romanhudyma/idp-deploy-next:latest
             docker rm -f idp-deploy-container-next || true
             docker run -d -p 3000:3000 --name idp-deploy-container-next romanhudyma/idp-deploy-next
