@@ -25,3 +25,18 @@ jobs:
         run: docker rm -f idp-deploy-container
       - name: run container
         run: docker run -d -p 3000:3000 --name idp-deploy-container romanhudyma/idp-deploy
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup ssh
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            docker pull romanhudyma/idp-deploy:latest
+            docker rm -f idp-deploy-container || true
+            docker run -d -p 3000:3000 --name idp-deploy-container romanhudyma/idp-deploy
+          EOF

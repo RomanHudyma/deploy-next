@@ -17,11 +17,16 @@ jobs:
         run: docker push romanhudyma/idp-deploy-next:latest
   deploy:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: pull image from docker hub
-        run: docker pull romanhudyma/idp-deploy-next:latest
-      - name: clean up prev container
-        run: docker rm -f idp-deploy-container-next
-      - name: run container
-        run: docker run -d -p 3000:3000 --name idp-deploy-container-next romanhudyma/idp-deploy-next
+      - name: setup ssh
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST_NEXT }} << 'EOF'
+            docker pull romanhudyma/idp-deploy-next:latest
+            docker rm -f idp-deploy-container-next || true
+            docker run -d -p 3000:3000 --name idp-deploy-container-next romanhudyma/idp-deploy-next
+          EOF
