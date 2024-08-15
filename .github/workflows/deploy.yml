@@ -17,16 +17,6 @@ jobs:
         run: docker push romanhudyma/idp-deploy:latest
   deploy:
     needs: build
-    runs-on: self-hosted
-    steps:
-      - name: pull image from docker hub
-        run: docker pull romanhudyma/idp-deploy:latest
-      - name: clean up prev container
-        run: docker rm -f idp-deploy-container
-      - name: run container
-        run: docker run -d -p 3000:3000 --name idp-deploy-container romanhudyma/idp-deploy
-  deploy:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: setup ssh
