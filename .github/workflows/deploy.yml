@@ -19,6 +19,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: debug ssh
+        run: |
+          ssh-add -l
+          ssh -v -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "SSH connection successful"
+          EOF
       - name: setup ssh
         uses: webfactory/ssh-agent@v0.5.3
         with:
